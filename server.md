@@ -287,6 +287,8 @@
             --restart=always \
             -e VIRTUAL_HOST=ttrss.${MY_DOMAIN} \
             -e VIRTUAL_PORT=8080 \
+	    -e TTRSS_URL=ttrss.${MY_DOMAIN} \
+	    -e TTRSS_PROTO=http \
             --link ttrss-data:db \
             --name ttrss \
             x86dev/docker-ttrss
