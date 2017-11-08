@@ -128,16 +128,6 @@
     chmod +x /usr/local/bin/docker-compose
     sh -c "curl -L https://raw.githubusercontent.com/docker/compose/1.8.2/contrib/completion/bash/docker-compose > /etc/bash_completion.d/docker-compose"
 
-## Let's Encrypt certificates:
-
-* Do:
-
-        mkdir -p /srv/letsencrypt/ && git clone https://github.com/lukas2511/dehydrated.git /srv/letsencrypt/script
-        mkdir -p /srv/letsencrypt/acme-challenge/.well-known/acme-challenge
-        mkdir -p /srv/letsencrypt/certs
-
-* **Note: Nginx needs to be restarted afterwards**
-
 ## (Reverse) Proxy
 
     https://github.com/jwilder/nginx-proxy
@@ -148,6 +138,7 @@
 * Preparation:
 
         mkdir -p /srv/nginx-proxy/vhost.d
+	mkdir -p /srv/nginx-proxy/nginx/html
 
 * Run proxy:
 
@@ -155,10 +146,28 @@
             --restart=always \
             -v /srv/letsencrypt/certs:/etc/nginx/certs:ro \
             -v /var/run/docker.sock:/tmp/docker.sock:ro \
-            -v /srv/nginx-proxy/vhost.d:/etc/nginx/vhost.d:ro \
-            -v /srv/letsencrypt/acme-challenge:/srv/letsencrypt/acme-challenge:ro \
+            -v /srv/nginx-proxy/vhost.d:/etc/nginx/vhost.d \
+	    -v /srv/nginx-proxy/nginx/html:/usr/share/nginx/html \
             --name nginx-proxy \
             jwilder/nginx-proxy
+
+## Let's Encrypt Companion (for TLS certificates)
+
+     https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion
+
+* Preparation:
+
+        mkdir -p /srv/letsencrypt/certs
+
+* Run:
+
+        docker run -d \
+		--restart=always \
+		-v /srv/letsencrypt/certs:/etc/nginx/certs:rw \
+		-v /var/run/docker.sock:/var/run/docker.sock:ro \
+		--volumes-from nginx-proxy \
+		--name letsencrypt-nginx-proxy-companion \
+		jrcs/letsencrypt-nginx-proxy-companion
 
 ## NextCloud
 
@@ -221,6 +230,8 @@
             -e DB_HOST=db_nextcloud \
             -e VIRTUAL_HOST=nextcloud.${MY_DOMAIN} \
             -e VIRTUAL_PORT=8888 \
+	    -e LETSENCRYPT_HOST=nextcloud.${MY_DOMAIN} \
+            -e LETSENCRYPT_EMAIL=webmaster@${MY_DOMAIN} \
             -e DOMAIN=localhost \
             -v nextcloud-apps:/apps2 \
             -v nextcloud-config:/config \
@@ -249,6 +260,8 @@
             -e VIRTUAL_PORT=8080 \
             -e TTRSS_URL=ttrss.${MY_DOMAIN} \
             -e TTRSS_PROTO=http \
+	    -e LETSENCRYPT_HOST=ttrss.${MY_DOMAIN} \
+	    -e LETSENCRYPT_EMAIL=webmaster@${MY_DOMAIN} \
             --link ttrss-data:db \
             --name ttrss \
             x86dev/docker-ttrss
