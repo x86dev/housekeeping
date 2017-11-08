@@ -56,22 +56,6 @@
   used to switch to the root user
 * **Then**: ```service ssh restart```
 
-## Froxlor (Not used anymore)
-
-    Apache:
-        /etc/apache2/apache.conf
-            - Remove "Indexes" in "<Directory /var/www/>" block.
-            - echo "ServerSignature Off" >> /etc/apache2/apache2.conf
-            - echo "ServerTokens Prod" >> /etc/apache2/apache2.conf
-        - a2enmod ssl
-        - service apache2 restart
-
-    IP and Ports -> Port 80 to 443 -> SSL: Yes
-
-    Cert:
-        openssl req -new -x509 -key /etc/ssl/private/apache.key -days 365 -sha256 -out /etc/ssl/certs/apache.crt
-        chmod 400 /etc/ssl/private/apache.key       
-
 ## Postfix
 
 * Install with:
@@ -153,30 +137,6 @@
         mkdir -p /srv/letsencrypt/certs
 
 * **Note: Nginx needs to be restarted afterwards**
-
-## Deprecated ~~Self-signed certificates~~
-
-    openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 -sha256 \
-        -subj "/C=US/ST=World/L=World/O=ttrss.${MY_DOMAIN}/CN=ttrss.${MY_DOMAIN}" \
-        -keyout "/etc/nginx/certs/ttrss.${MY_DOMAIN}.key" \
-        -out "/etc/nginx/certs/ttrss.${MY_DOMAIN}.crt"
-    chmod 600 "/etc/nginx/certs/ttrss.${MY_DOMAIN}.key"
-    chmod 600 "/etc/nginx/certs/ttrss.${MY_DOMAIN}.crt"
-
-    openssl req -new -newkey rsa:2048 -days 3650 -nodes -x509 -sha256 \
-        -subj "/C=US/ST=World/L=World/O=pydio.${MY_DOMAIN}/CN=pydio.${MY_DOMAIN}" \
-        -keyout "/etc/nginx/certs/pydio.${MY_DOMAIN}.key" \
-        -out "/etc/nginx/certs/pydio.${MY_DOMAIN}.crt"
-    chmod 600 "/etc/nginx/certs/pydio.${MY_DOMAIN}.key"
-    chmod 600 "/etc/nginx/certs/pydio.${MY_DOMAIN}.crt"
-
-## Deprecated ~~Certificates for all Docker instances~~
-
-    /etc/nginx/certs
-        /etc/nginx/certs/ttrss.${MY_DOMAIN}.crt
-        /etc/nginx/certs/ttrss.${MY_DOMAIN}.key
-        /etc/nginx/certs/pydio.${MY_DOMAIN}.crt
-        /etc/nginx/certs/pydio.${MY_DOMAIN}.key
 
 ## (Reverse) Proxy
 
