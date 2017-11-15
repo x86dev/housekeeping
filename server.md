@@ -271,35 +271,6 @@
             --name ttrss \
             x86dev/docker-ttrss
 
-## Pydio
-
-    <https://github.com/x86dev/docker-pydio>
-
-* Let's Encrypt Challenge:
- 
-        echo 'location "/.well-known/acme-challenge" {
-            default_type "text/plain";
-            root /srv/letsencrypt/acme-challenge;
-        }' > /srv/nginx-proxy/vhost.d/pydio.${MY_DOMAIN}
-
- * Set server URL (under "Pydio Main Option" -> "Server URL"):
-  
-        https://pydio.${MY_DOMAIN}/
-
-* Create volume:
-
-        docker volume create --name pydio-data
-
-
-* Run Pydio:
-     
-        docker run -d -it \
-            --restart=always \
-            -e VIRTUAL_HOST=pydio.${MY_DOMAIN} \
-            --volumes-from pydio-data \
-            --name pydio \
-            x86dev/docker-pydio
-
 ## VPN (IPSEC)
 
 * Load kernel module:
