@@ -5,12 +5,12 @@
         export MY_DOMAIN=mydomain.tld
         export MY_USER_NAME=myuser
         
-	export MY_EMAIL_USER=me@gmail.com
+        export MY_EMAIL_USER=me@gmail.com
         export MY_EMAIL_PW=mypassword
         export MY_EMAIL_SMTP_HOST=smtp.gmail.com
         export MY_EMAIL_SMTP_PORT=587
         
-	export MY_VPN_IPSEC_PSK=your_ipsec_pre_shared_key
+        export MY_VPN_IPSEC_PSK=your_ipsec_pre_shared_key
         export MY_VPN_USER=your_vpn_username
         export MY_VPN_PASSWORD=your_vpn_password
 	
