@@ -4,11 +4,16 @@
 
         export MY_DOMAIN=mydomain.tld
         export MY_USER_NAME=myuser
-        export MY_EMAIL_USER=me@gmail.com
+        
+	export MY_EMAIL_USER=me@gmail.com
         export MY_EMAIL_PW=mypassword
         export MY_EMAIL_SMTP_HOST=smtp.gmail.com
         export MY_EMAIL_SMTP_PORT=587
         
+	export MY_VPN_IPSEC_PSK=your_ipsec_pre_shared_key
+        export MY_VPN_USER=your_vpn_username
+        export MY_VPN_PASSWORD=your_vpn_password
+	
         mkdir -p /srv
         bash -c "$(curl -fsSL https://raw.github.com/x86dev/dotfiles/master/bin/dotfiles)" && source ~/.bashrc
 
@@ -294,6 +299,28 @@
             --volumes-from pydio-data \
             --name pydio \
             x86dev/docker-pydio
+
+## VPN (IPSEC)
+
+* Load kernel module:
+
+	modprobe af_key
+* Run:
+	docker run \
+    	--name ipsec-vpn-server \
+    	-e VPN_IPSEC_PSK=${VPN_IPSEC_PSK} \
+	-e VPN_USER=${MY_VPN_PASSWORD} \
+	-e VPN_PASSWORD=${MY_VPN_PASSWORD} \
+    	--restart=always \
+    	-p 500:500/udp \
+    	-p 4500:4500/udp \
+    	-v /lib/modules:/lib/modules:ro \
+    	-d --privileged \
+    	hwdsl2/ipsec-vpn-server
+
+* Check status
+
+	docker exec -it ipsec-vpn-server ipsec status
 
 ---
 
