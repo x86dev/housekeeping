@@ -275,19 +275,21 @@
 
 * Load kernel module:
 
-	modprobe af_key
+        modprobe af_key
+	
 * Run:
-	docker run \
-    	--name ipsec-vpn-server \
-    	-e VPN_IPSEC_PSK=${VPN_IPSEC_PSK} \
-	-e VPN_USER=${MY_VPN_PASSWORD} \
-	-e VPN_PASSWORD=${MY_VPN_PASSWORD} \
-    	--restart=always \
-    	-p 500:500/udp \
-    	-p 4500:4500/udp \
-    	-v /lib/modules:/lib/modules:ro \
-    	-d --privileged \
-    	hwdsl2/ipsec-vpn-server
+
+        docker run \
+            --name ipsec-vpn-server \
+            -e VPN_IPSEC_PSK=${VPN_IPSEC_PSK} \
+            -e VPN_USER=${MY_VPN_PASSWORD} \
+            -e VPN_PASSWORD=${MY_VPN_PASSWORD} \
+            --restart=always \
+            -p 500:500/udp \
+            -p 4500:4500/udp \
+            -v /lib/modules:/lib/modules:ro \
+            -d --privileged \
+            hwdsl2/ipsec-vpn-server
 
 * Check status
 
