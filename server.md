@@ -4,16 +4,16 @@
 
         export MY_DOMAIN=mydomain.tld
         export MY_USER_NAME=myuser
-        
+
         export MY_EMAIL_USER=me@gmail.com
         export MY_EMAIL_PW=mypassword
         export MY_EMAIL_SMTP_HOST=smtp.gmail.com
         export MY_EMAIL_SMTP_PORT=587
-        
+
         export MY_VPN_IPSEC_PSK=your_ipsec_pre_shared_key
         export MY_VPN_USER=your_vpn_username
         export MY_VPN_PASSWORD=your_vpn_password
-	
+
         mkdir -p /srv
         bash -c "$(curl -fsSL https://raw.github.com/x86dev/dotfiles/master/bin/dotfiles)" && source ~/.bashrc
 
@@ -21,7 +21,7 @@
 
 * Edit the following files:
 
-        /etc/hostname       
+        /etc/hostname
         /etc/hosts
 
 * Reboot
@@ -66,9 +66,9 @@
 * Install with:
 
         apt-get install -y postfix mailutils libsasl2-2 ca-certificates libsasl2-modules
-    
+
 * Configure:
-    
+
         cat <<EOT >> /etc/postfix/main.cf
         relayhost = [${MY_EMAIL_SMTP_HOST}]:${MY_EMAIL_SMTP_PORT}
         smtp_sasl_auth_enable = yes
@@ -116,7 +116,7 @@
 ## Install Docker
 
 ### Kernel extras to enable docker aufs support
-        
+
         apt-get -y install linux-image-extra-$(uname -r)
 
 ### Add Docker PPA and install latest version
@@ -143,7 +143,7 @@
 * Preparation:
 
         mkdir -p /srv/nginx-proxy/vhost.d
-	mkdir -p /srv/nginx-proxy/nginx/html
+        mkdir -p /srv/nginx-proxy/nginx/html
 
 * Run proxy:
 
@@ -152,7 +152,7 @@
             -v /srv/letsencrypt/certs:/etc/nginx/certs:ro \
             -v /var/run/docker.sock:/tmp/docker.sock:ro \
             -v /srv/nginx-proxy/vhost.d:/etc/nginx/vhost.d \
-	    -v /srv/nginx-proxy/nginx/html:/usr/share/nginx/html \
+            -v /srv/nginx-proxy/nginx/html:/usr/share/nginx/html \
             --name nginx-proxy \
             jwilder/nginx-proxy
 
@@ -167,12 +167,12 @@
 * Run:
 
         docker run -d \
-		--restart=always \
-		-v /srv/letsencrypt/certs:/etc/nginx/certs:rw \
-		-v /var/run/docker.sock:/var/run/docker.sock:ro \
-		--volumes-from nginx-proxy \
-		--name letsencrypt-nginx-proxy-companion \
-		jrcs/letsencrypt-nginx-proxy-companion
+                --restart=always \
+                -v /srv/letsencrypt/certs:/etc/nginx/certs:rw \
+                -v /var/run/docker.sock:/var/run/docker.sock:ro \
+                --volumes-from nginx-proxy \
+                --name letsencrypt-nginx-proxy-companion \
+                jrcs/letsencrypt-nginx-proxy-companion
 
 ## NextCloud
 
@@ -184,7 +184,7 @@
         export MY_NEXTCLOUD_DB_USER=nextcloud
         export MY_NEXTCLOUD_DB_PASSWORD=changeme
 
-* Let's Encrypt Challenge: 
+* Let's Encrypt Challenge:
 
         echo 'location "/.well-known/acme-challenge" {
             default_type "text/plain";
@@ -235,7 +235,7 @@
             -e DB_HOST=db_nextcloud \
             -e VIRTUAL_HOST=nextcloud.${MY_DOMAIN} \
             -e VIRTUAL_PORT=8888 \
-	    -e LETSENCRYPT_HOST=nextcloud.${MY_DOMAIN} \
+            -e LETSENCRYPT_HOST=nextcloud.${MY_DOMAIN} \
             -e LETSENCRYPT_EMAIL=webmaster@${MY_DOMAIN} \
             -e DOMAIN=localhost \
             -v nextcloud-apps:/apps2 \
@@ -247,27 +247,27 @@
 
 
 ## Tiny Tiny RSS (TTRSS)
-    
+
     https://github.com/x86dev/docker-ttrss
 
 * Let's Encrypt Challenge:
-     
+
         echo 'location "/.well-known/acme-challenge" {
             default_type "text/plain";
             root /srv/letsencrypt/acme-challenge;
         }' > /srv/nginx-proxy/vhost.d/ttrss.${MY_DOMAIN}
 
 * Run TTRSS:
-     
+
         docker run -d -it \
             --restart=always \
             -e VIRTUAL_HOST=ttrss.${MY_DOMAIN} \
             -e VIRTUAL_PORT=8080 \
-	    -e TTRSS_SELF_URL=https://ttrss.${MY_DOMAIN} \
+            -e TTRSS_SELF_URL=https://ttrss.${MY_DOMAIN} \
             -e TTRSS_URL=ttrss.${MY_DOMAIN} \
             -e TTRSS_PROTO=http \
-	    -e LETSENCRYPT_HOST=ttrss.${MY_DOMAIN} \
-	    -e LETSENCRYPT_EMAIL=webmaster@${MY_DOMAIN} \
+            -e LETSENCRYPT_HOST=ttrss.${MY_DOMAIN} \
+            -e LETSENCRYPT_EMAIL=webmaster@${MY_DOMAIN} \
             --link ttrss-data:db \
             --name ttrss \
             x86dev/docker-ttrss
@@ -277,7 +277,7 @@
 * Load kernel module:
 
         modprobe af_key
-	
+
 * Run:
 
         docker run \
@@ -301,7 +301,7 @@
 ## Cleanup
 
     docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
-	docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
+        docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
 
 ## Rescue
     ssh user@remote "dd if=/dev/sdX | gzip -1 -" | pv | dd of=image.gz
@@ -311,7 +311,7 @@
     docker run --rm -it <images> /bin/bash
     wget --no-check-certificate -p http://pydio.${MY_DOMAIN}
     docker cp nginx-proxy:/etc/nginx/conf.d/default.conf /tmp && less /tmp/default.conf
-    
+
     supervisord:
         supervisorctl reload
 
