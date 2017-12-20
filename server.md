@@ -2,6 +2,8 @@
 
 **Note: All commands must be executed on the server as root (unless stated otherwise)!**
 
+        export MY_SRV_ROOT=/srv
+
         export MY_DOMAIN=mydomain.tld
         export MY_USER_NAME=myuser
 
@@ -14,7 +16,7 @@
         export MY_VPN_USER=your_vpn_username
         export MY_VPN_PASSWORD=your_vpn_password
 
-        mkdir -p /srv
+        mkdir -p ${MY_SRV_ROOT}
         bash -c "$(curl -fsSL https://raw.github.com/x86dev/dotfiles/master/bin/dotfiles)" && source ~/.bashrc
 
 ## Edit host name
@@ -142,17 +144,17 @@
 
 * Preparation:
 
-        mkdir -p /srv/nginx-proxy/vhost.d
-        mkdir -p /srv/nginx-proxy/nginx/html
+        mkdir -p ${MY_SRV_ROOT}/nginx-proxy/vhost.d
+        mkdir -p ${MY_SRV_ROOT}/nginx-proxy/nginx/html
 
 * Run proxy:
 
         docker run -d -p 80:80 -p 443:443 \
             --restart=always \
-            -v /srv/letsencrypt/certs:/etc/nginx/certs:ro \
+            -v ${MY_SRV_ROOT}/letsencrypt/certs:/etc/nginx/certs:ro \
             -v /var/run/docker.sock:/tmp/docker.sock:ro \
-            -v /srv/nginx-proxy/vhost.d:/etc/nginx/vhost.d \
-            -v /srv/nginx-proxy/nginx/html:/usr/share/nginx/html \
+            -v ${MY_SRV_ROOT}/nginx-proxy/vhost.d:/etc/nginx/vhost.d \
+            -v ${MY_SRV_ROOT}/nginx-proxy/nginx/html:/usr/share/nginx/html \
             --name nginx-proxy \
             jwilder/nginx-proxy
 
@@ -162,13 +164,13 @@
 
 * Preparation:
 
-        mkdir -p /srv/letsencrypt/certs
+        mkdir -p ${MY_SRV_ROOT}/letsencrypt/certs
 
 * Run:
 
         docker run -d \
                 --restart=always \
-                -v /srv/letsencrypt/certs:/etc/nginx/certs:rw \
+                -v ${MY_SRV_ROOT}/letsencrypt/certs:/etc/nginx/certs:rw \
                 -v /var/run/docker.sock:/var/run/docker.sock:ro \
                 --volumes-from nginx-proxy \
                 --name letsencrypt-nginx-proxy-companion \
@@ -188,8 +190,8 @@
 
         echo 'location "/.well-known/acme-challenge" {
             default_type "text/plain";
-            root /srv/letsencrypt/acme-challenge;
-        }' > /srv/nginx-proxy/vhost.d/nextcloud.${MY_DOMAIN}
+            root ${MY_SRV_ROOT}/letsencrypt/acme-challenge;
+        }' > ${MY_SRV_ROOT}/nginx-proxy/vhost.d/nextcloud.${MY_DOMAIN}
 
 * Create volumes:
 
@@ -254,8 +256,8 @@
 
         echo 'location "/.well-known/acme-challenge" {
             default_type "text/plain";
-            root /srv/letsencrypt/acme-challenge;
-        }' > /srv/nginx-proxy/vhost.d/ttrss.${MY_DOMAIN}
+            root ${MY_SRV_ROOT}/letsencrypt/acme-challenge;
+        }' > ${MY_SRV_ROOT}/nginx-proxy/vhost.d/ttrss.${MY_DOMAIN}
 
 * Run TTRSS:
 
