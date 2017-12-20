@@ -12,10 +12,6 @@
         export MY_EMAIL_SMTP_HOST=smtp.gmail.com
         export MY_EMAIL_SMTP_PORT=587
 
-        export MY_VPN_IPSEC_PSK=your_ipsec_pre_shared_key
-        export MY_VPN_USER=your_vpn_username
-        export MY_VPN_PASSWORD=your_vpn_password
-
         mkdir -p ${MY_SRV_ROOT}
         bash -c "$(curl -fsSL https://raw.github.com/x86dev/dotfiles/master/bin/dotfiles)" && source ~/.bashrc
 
@@ -275,6 +271,12 @@
             x86dev/docker-ttrss
 
 ## VPN (IPSEC)
+
+* Setup:
+
+        export MY_VPN_IPSEC_PSK=your_ipsec_pre_shared_key
+        export MY_VPN_USER=your_vpn_username
+        export MY_VPN_PASSWORD=your_vpn_password
 
 * Load kernel module:
 
