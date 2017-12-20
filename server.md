@@ -263,6 +263,7 @@
             --restart=always \
             -e VIRTUAL_HOST=ttrss.${MY_DOMAIN} \
             -e VIRTUAL_PORT=8080 \
+	    -e TTRSS_SELF_URL=https://ttrss.${MY_DOMAIN} \
             -e TTRSS_URL=ttrss.${MY_DOMAIN} \
             -e TTRSS_PROTO=http \
 	    -e LETSENCRYPT_HOST=ttrss.${MY_DOMAIN} \
