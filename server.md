@@ -282,8 +282,8 @@
 
         docker run \
             --name ipsec-vpn-server \
-            -e VPN_IPSEC_PSK=${VPN_IPSEC_PSK} \
-            -e VPN_USER=${MY_VPN_PASSWORD} \
+            -e VPN_IPSEC_PSK=${MY_VPN_IPSEC_PSK} \
+            -e VPN_USER=${MY_VPN_USER} \
             -e VPN_PASSWORD=${MY_VPN_PASSWORD} \
             --restart=always \
             -p 500:500/udp \
