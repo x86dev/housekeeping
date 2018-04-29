@@ -302,6 +302,10 @@
 
 ---
 
+## Backup / Restore
+
+    docker run -v nextcloud-data:/volume -v /tmp:/backup loomchild/volume-backup backup nextcloud-data
+    
 ## Cleanup
 
     docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
