@@ -141,7 +141,7 @@
 * Preparation:
 
         mkdir -p ${MY_SRV_ROOT}/nginx-proxy/vhost.d
-        mkdir -p ${MY_SRV_ROOT}/nginx-proxy/nginx/html
+        mkdir -p ${MY_SRV_ROOT}/nginx-proxy/html
 
 * Run proxy:
 
@@ -150,7 +150,7 @@
             -v ${MY_SRV_ROOT}/letsencrypt/certs:/etc/nginx/certs:ro \
             -v /var/run/docker.sock:/tmp/docker.sock:ro \
             -v ${MY_SRV_ROOT}/nginx-proxy/vhost.d:/etc/nginx/vhost.d \
-            -v ${MY_SRV_ROOT}/nginx-proxy/nginx/html:/usr/share/nginx/html \
+            -v ${MY_SRV_ROOT}/nginx-proxy/html:/usr/share/nginx/html \
             --name nginx-proxy \
             jwilder/nginx-proxy
 
