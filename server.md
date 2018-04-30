@@ -212,36 +212,30 @@
 
 * Run NextCloud:
 
-        docker run -d \
-            --name nextcloud \
-            --link nextcloud-db:db_nextcloud \
-            --restart=always \
-            --expose 80 \
-            --expose 443 \
-            --expose 8888 \
-            -e UID=1000 \
-            -e GID=1000 \
-            -e UPLOAD_MAX_SIZE=10G \
-            -e APC_SHM_SIZE=128M \
-            -e OPCACHE_MEM_SIZE=128 \
-            -e CRON_PERIOD=15m \
-            -e TZ=Berlin/UTC \
-            -e DB_TYPE=mysql \
-            -e DB_NAME=nextcloud \
-            -e DB_USER=nextcloud \
-            -e DB_PASSWORD=${MY_NEXTCLOUD_DB_PASSWORD} \
-            -e DB_HOST=db_nextcloud \
-            -e VIRTUAL_HOST=nextcloud.${MY_DOMAIN} \
-            -e VIRTUAL_PORT=8888 \
-            -e LETSENCRYPT_HOST=nextcloud.${MY_DOMAIN} \
-            -e LETSENCRYPT_EMAIL=webmaster@${MY_DOMAIN} \
-            -e DOMAIN=localhost \
-            -v nextcloud-apps:/apps2 \
-            -v nextcloud-config:/config \
-            -v nextcloud-data:/data \
-            -v nextcloud-themes:/nextcloud/themes \
-            wonderfall/nextcloud
-
+         docker run -d \
+         --name nextcloud \
+         --link nextcloud-db:db \
+         --restart=always \
+         -p 8888:80 \
+         -e UID=1000 \
+         -e GID=1000 \
+         -e UPLOAD_MAX_SIZE=10G \
+         -e APC_SHM_SIZE=128M \
+         -e OPCACHE_MEM_SIZE=128 \
+         -e CRON_PERIOD=15m \
+         -e TZ=Berlin/UTC \
+         -e MYSQL_DATABASE=nextcloud \
+         -e MYSQL_USER=nextcloud \
+         -e MYSQL_PASSWORD=${MY_NEXTCLOUD_DB_PASSWORD} \
+         -e DB_HOST=db_nextcloud \
+         -e VIRTUAL_HOST=nextcloud.${MY_DOMAIN} \
+         -e VIRTUAL_PORT=8888 \
+         -e LETSENCRYPT_HOST=nextcloud.${MY_DOMAIN} \
+         -e LETSENCRYPT_EMAIL=webmaster@${MY_DOMAIN} \
+         -v nextcloud-config:/var/www/html/config \
+         -v nextcloud-data:/var/www/html/data \
+         -v nextcloud-themes:/var/www/html/themes \
+         nextcloud
 
 
 ## Tiny Tiny RSS (TTRSS)
