@@ -296,14 +296,15 @@
 
 ---
 
-## Backup / Restore
+## Always restart containers (on reboot / failures)
+    docker ps | cut -f1 -d' ' | tail -n +2 | xargs sudo docker update --restart=always
 
+## Backup / Restore
     docker run -v nextcloud-data:/volume -v /tmp:/backup loomchild/volume-backup backup nextcloud-data
     
-## Cleanup
-
+## Cleanup (make sure you known what you're doing!)
     docker rm -v $(docker ps --filter status=exited -q 2>/dev/null) 2>/dev/null
-        docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
+    docker rmi $(docker images --filter dangling=true -q 2>/dev/null) 2>/dev/null
 
 ## Rescue
     ssh user@remote "dd if=/dev/sdX | gzip -1 -" | pv | dd of=image.gz
