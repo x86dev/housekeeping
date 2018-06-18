@@ -151,6 +151,7 @@
             -v /var/run/docker.sock:/tmp/docker.sock:ro \
             -v ${MY_SRV_ROOT}/nginx-proxy/vhost.d:/etc/nginx/vhost.d \
             -v ${MY_SRV_ROOT}/nginx-proxy/html:/usr/share/nginx/html \
+            --label com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy \
             --name nginx-proxy \
             jwilder/nginx-proxy
 
