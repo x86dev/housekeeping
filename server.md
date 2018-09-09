@@ -295,7 +295,31 @@
 
         docker exec -it ipsec-vpn-server ipsec status
 
+## Gitea
+
+* Setup:
+        docker volume create gitea-repo
+
+* Run:
+        docker run -d -it \
+            --name gitea \
+            --restart=always \
+            -v gitea-repo:/data \
+            -e VIRTUAL_HOST=git.${MY_DOMAIN} \
+            -e VIRTUAL_PORT=3000 \
+            -e LETSENCRYPT_HOST=git.${MY_DOMAIN} \
+            -e LETSENCRYPT_EMAIL=webmaster@${MY_DOMAIN} \
+            gitea/gitea
+
+* Configuration:
+        vi /var/lib/docker/volumes/gitea-repo/_data/gitea/conf/app.ini
+        docker restart gitea
+
 ---
+
+
+## Certificates
+    docker exec letsencrypt-nginx-proxy-companion /app/force_renew
 
 ## Always restart containers (on reboot / failures)
     docker ps | cut -f1 -d' ' | tail -n +2 | xargs sudo docker update --restart=always
