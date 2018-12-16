@@ -346,3 +346,6 @@
     nginx:
         config test: nginx -t && service nginx reload
         404: nginx -g "pid /tmp/n.pid; daemon off; error_log /var/log/nginx/error.log debug;"
+
+    ttrss:
+        docker exec -it ttrss-data psql -U postgres
