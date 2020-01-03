@@ -1,3 +1,5 @@
+# Runbook for a server installation
+
 ## Base
 
 **Note: All commands must be executed on the server as root (unless stated otherwise)!**
@@ -175,20 +177,7 @@
 
 ## NextCloud
 
-    https://github.com/Wonderfall/dockerfiles
-
-* Setup:
-
-        export MY_MYSQL_ROOT_PASSWORD=changeme
-        export MY_NEXTCLOUD_DB_USER=nextcloud
-        export MY_NEXTCLOUD_DB_PASSWORD=changeme
-
-* Let's Encrypt Challenge:
-
-        echo 'location "/.well-known/acme-challenge" {
-            default_type "text/plain";
-            root ${MY_SRV_ROOT}/letsencrypt/acme-challenge;
-        }' > ${MY_SRV_ROOT}/nginx-proxy/vhost.d/nextcloud.${MY_DOMAIN}
+* See: https://github.com/nextcloud/docker
 
 * Create volumes:
 
@@ -197,8 +186,6 @@
         docker volume create --name nextcloud-apps
         docker volume create --name nextcloud-config
         docker volume create --name nextcloud-themes
-        docker volume ls
-        docker volume inspect <volume>
 
 * Run NextCloud database:
 
