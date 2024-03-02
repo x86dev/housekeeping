@@ -29,7 +29,7 @@
 ## APT Stuff (for Debian and derivates)
 
         apt-get update && apt-get upgrade
-        apt-get install -y apt-listchanges apt-transport-https ntp ntpdate htop screen git vim etckeeper mc fail2ban unattended-upgrades
+        apt-get install -y apt-listchanges apt-transport-https ntp ntpdate htop podman podman-compose tmux git vim etckeeper mc fail2ban unattended-upgrades
 
 ## Backports (for Debian and derivates)
 
@@ -53,6 +53,9 @@
 
         ssh-keygen -t rsa
         ssh-copy-id -i id_file.pub ${MY_USER_NAME}@${MY_DOMAIN}
+
+* On server, do:
+  
         sed -i 's|[#]*Port .*|Port 2222|g' /etc/ssh/sshd_config
         sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
 
@@ -60,6 +63,14 @@
 * The just-added user needs to be used in order to log in via SSH; after logging in a ```sudo su -``` can be
   used to switch to the root user
 * **Then**: ```service ssh restart```
+
+## Podman
+
+* systemctl enable --user podman
+* systemctl start --user podman
+* Edit /etc/containers/registries.conf:
+`[registries.search]
+registries = ['quay.io', 'docker.io']`
 
 ## Postfix
 
@@ -103,7 +114,7 @@
 
         mkdir -p /var/cache/logwatch
         cp /usr/share/logwatch/default.conf/logwatch.conf /etc/logwatch/conf/
-        sed -i 's|Range = yesterday|Range = -7|g' /etc/logwatch/conf/
+        sed -i 's|Range = yesterday|Range = -7|g' /etc/logwatch/conf/logwatch.conf
 
         cat <<EOT > /etc/cron.weekly/00logwatch
             /usr/sbin/logwatch --output mail --mailto ${MY_EMAIL_USER} --detail high
