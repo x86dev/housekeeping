@@ -66,11 +66,29 @@
 
 ## Podman
 
+* adduser podman
+* mkdir -p ${MY_SRV_ROOT}/containers/user/podman/storage
+* chmod 0711 ${MY_SRV_ROOT}/podman/containers ${MY_SRV_ROOT}/podman/containers/user
+* chmod -R 0700 ${MY_SRV_ROOT}/podman/containers/user/podman
+* chown -R podman:podman ${MY_SRV_ROOT}/podman/containers/user/podman
+* mkdir -p /home/podman/.config/containers/
+* /home/podman/.config/containers/storage.conf:
+`[storage]
+driver = "overlay"
+rootless_storage_path = "${MY_SRV_ROOT}/podman/containers/user/podman/storage"`
+* chown podman:podman -R /home/podman/.config/containers/
 * systemctl enable --user podman
 * systemctl start --user podman
+* systemctl --user enable --now podman.sock
+* systemctl --user enable --now docker.sock
+* loginctl enable-linger podman
+* sudo sysctl net.ipv4.ip_unprivileged_port_start=0
 * Edit /etc/containers/registries.conf:
 `[registries.search]
-registries = ['quay.io', 'docker.io']`
+registries = ['ghcr.io', 'docker.io']`
+
+* Run as user: # su - podman (*not* the same as su podman)
+* Test: podman run -it -p 80:80 docker.io/library/httpd
 
 ## Postfix
 
