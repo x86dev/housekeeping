@@ -29,7 +29,7 @@
 ## APT Stuff (for Debian and derivates)
 
         apt-get update && apt-get upgrade
-        apt-get install -y apt-listchanges apt-transport-https ntp ntpdate htop podman podman-compose tmux git vim etckeeper mc fail2ban unattended-upgrades
+        apt-get install -y apt-listchanges apt-transport-https net-tools ntp ntpdate ca-certificates curl htop podman podman-compose tmux git vim etckeeper mc fail2ban unattended-upgrades
 
 ## Backports (for Debian and derivates)
 
@@ -82,7 +82,7 @@ rootless_storage_path = "${MY_SRV_ROOT}/podman/containers/user/podman/storage"`
 * systemctl --user enable --now podman.sock
 * systemctl --user enable --now docker.sock
 * loginctl enable-linger podman
-* sudo sysctl net.ipv4.ip_unprivileged_port_start=0
+* echo "net.ipv4.ip_unprivileged_port_start=80" >> /etc/sysctl.d/podman-privileged-ports.conf
 * Edit /etc/containers/registries.conf:
 `[registries.search]
 registries = ['ghcr.io', 'docker.io']`
