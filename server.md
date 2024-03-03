@@ -90,6 +90,11 @@ registries = ['ghcr.io', 'docker.io']`
 * Run as user: # su - podman (*not* the same as su podman)
 * Test: podman run -it -p 80:80 docker.io/library/httpd
 
+## Cron
+
+ln -s ${MY_SRV_ROOT}/cron/daily /etc/cron.daily/
+ln -s ${MY_SRV_ROOT}/monthly /etc/cron.monthly/
+
 ## Postfix
 
 * Install with:
