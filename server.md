@@ -33,6 +33,7 @@
 
         apt-get update && apt-get upgrade
         apt-get install -y apt-listchanges apt-transport-https net-tools ntp ntpdate ca-certificates curl htop podman podman-compose tmux git vim etckeeper mc fail2ban unattended-upgrades
+        apt-get --purge remove exim4-base -s
 
 ## Backports (for Debian 12 Bookworm)
 
