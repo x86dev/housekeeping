@@ -3,8 +3,8 @@
 ## Base
 
         mkdir -p /srv
+        chmod 700 /srv
         
-
 **Note: All commands must be executed on the server as root (unless stated otherwise)!**
 
         export MY_SRV_ROOT=/srv
