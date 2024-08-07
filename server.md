@@ -49,6 +49,7 @@
 * On server, do:
 
         adduser ${MY_USER_NAME}
+        usermod -aG sudo ${MY_USER_NAME}
         su ${MY_USER_NAME}
         bash -c "$(curl -fsSL https://raw.github.com/x86dev/dotfiles/master/bin/dotfiles)" && source ~/.bashrc
 
@@ -70,6 +71,35 @@
   used to switch to the root user
 * **Then**: ```service ssh restart```
 
+## Docker
+
+ ```
+ for pkg in docker.io docker-doc docker-compose podman-docker containerd runc; do sudo apt-get remove $pkg; done
+ sudo install -m 0755 -d /etc/apt/keyrings
+ sudo curl -fsSL https://download.docker.com/linux/debian/gpg -o /etc/apt/keyrings/docker.asc
+ sudo chmod a+r /etc/apt/keyrings/docker.asc
+ echo \
+  "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/debian \
+  $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+  sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+ apt-get update
+ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+ groupadd docker
+ usermod -aG docker ${MY_USER_NAME}
+ systemctl stop docker.service
+ systemctl stop containerd.service
+ mv /var/lib/docker ${MY_SRV_ROOT}/
+ cat > /etc/docker/daemon.json <<EOF
+{
+    "data-root" : "${MY_SRV_ROOT}/docker" 
+}
+EOF
+ systemctl enable docker.service
+ systemctl enable containerd.service
+ systemctl start docker
+ docker info -f '{{ .DockerRootDir}}'
+ ```
+ 
 ## Podman
 
 * adduser podman
