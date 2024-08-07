@@ -185,24 +185,6 @@ ln -s ${MY_SRV_ROOT}/monthly /etc/cron.monthly/
 
 ## Install Docker
 
-### Kernel extras to enable docker aufs support
-
-        apt-get -y install linux-image-extra-$(uname -r)
-
-### Add Docker PPA and install latest version
-
-        apt-key adv --keyserver hkp://p80.pool.sks-keyservers.net:80 --recv-keys 58118E89F3A912897C070ADBF76221572C52609D
-        sh -c "echo deb https://apt.dockerproject.org/repo debian-jessie main > /etc/apt/sources.list.d/docker.list"
-        apt-get update
-        apt-get install -y apt-transport-https init-system-helpers docker-engine
-        service docker start
-
-### Install docker-compose
-
-    sh -c "curl -L https://github.com/docker/compose/releases/download/1.8.2/docker-compose-`uname -s`-`uname -m` > /usr/local/bin/docker-compose"
-    chmod +x /usr/local/bin/docker-compose
-    sh -c "curl -L https://raw.githubusercontent.com/docker/compose/1.8.2/contrib/completion/bash/docker-compose > /etc/bash_completion.d/docker-compose"
-
 ## (Reverse) Proxy
 
     https://github.com/jwilder/nginx-proxy
@@ -215,18 +197,6 @@ ln -s ${MY_SRV_ROOT}/monthly /etc/cron.monthly/
         mkdir -p ${MY_SRV_ROOT}/nginx-proxy/vhost.d
         mkdir -p ${MY_SRV_ROOT}/nginx-proxy/html
 
-* Run proxy:
-
-        docker run -d -p 80:80 -p 443:443 \
-            --restart=always \
-            -v ${MY_SRV_ROOT}/letsencrypt/certs:/etc/nginx/certs:ro \
-            -v /var/run/docker.sock:/tmp/docker.sock:ro \
-            -v ${MY_SRV_ROOT}/nginx-proxy/vhost.d:/etc/nginx/vhost.d \
-            -v ${MY_SRV_ROOT}/nginx-proxy/html:/usr/share/nginx/html \
-            --label com.github.jrcs.letsencrypt_nginx_proxy_companion.nginx_proxy \
-            --name nginx-proxy \
-            jwilder/nginx-proxy
-
 ## Let's Encrypt Companion (for TLS certificates)
 
      https://github.com/JrCs/docker-letsencrypt-nginx-proxy-companion
@@ -234,16 +204,6 @@ ln -s ${MY_SRV_ROOT}/monthly /etc/cron.monthly/
 * Preparation:
 
         mkdir -p ${MY_SRV_ROOT}/letsencrypt/certs
-
-* Run:
-
-        docker run -d \
-                --restart=always \
-                -v ${MY_SRV_ROOT}/letsencrypt/certs:/etc/nginx/certs:rw \
-                -v /var/run/docker.sock:/var/run/docker.sock:ro \
-                --volumes-from nginx-proxy \
-                --name letsencrypt-nginx-proxy-companion \
-                jrcs/letsencrypt-nginx-proxy-companion
 
 ## NextCloud
 
@@ -256,46 +216,6 @@ ln -s ${MY_SRV_ROOT}/monthly /etc/cron.monthly/
         docker volume create --name nextcloud-apps
         docker volume create --name nextcloud-config
         docker volume create --name nextcloud-themes
-
-* Run NextCloud database:
-
-        docker run -d \
-            --name nextcloud-db \
-            -v nextcloud-db-data:/var/lib/mysql \
-            -e MYSQL_ROOT_PASSWORD=${MY_MYSQL_ROOT_PASSWORD} \
-            -e MYSQL_DATABASE=nextcloud \
-            -e MYSQL_USER=${MY_NEXTCLOUD_DB_USER} \
-            -e MYSQL_PASSWORD=${MY_NEXTCLOUD_DB_PASSWORD} \
-            mariadb:10
-
-* Run NextCloud:
-
-         docker run -d \
-         --name nextcloud \
-         --link nextcloud-db:db \
-         --restart=always \
-         -p 8888:80 \
-         -e UID=1000 \
-         -e GID=1000 \
-         -e UPLOAD_MAX_SIZE=10G \
-         -e APC_SHM_SIZE=128M \
-         -e OPCACHE_MEM_SIZE=128 \
-         -e CRON_PERIOD=15m \
-         -e TZ=Berlin/UTC \
-         -e MYSQL_DATABASE=nextcloud \
-         -e MYSQL_USER=nextcloud \
-         -e MYSQL_PASSWORD=${MY_NEXTCLOUD_DB_PASSWORD} \
-         -e DB_HOST=db_nextcloud \
-         -e VIRTUAL_HOST=nextcloud.${MY_DOMAIN} \
-         -e VIRTUAL_PORT=8888 \
-         -e LETSENCRYPT_HOST=nextcloud.${MY_DOMAIN} \
-         -e LETSENCRYPT_EMAIL=webmaster@${MY_DOMAIN} \
-         -v nextcloud-config:/var/www/html/config \
-         -v nextcloud-data:/var/www/html/data \
-         -v nextcloud-themes:/var/www/html/themes \
-         nextcloud
-
-
 ## Tiny Tiny RSS (TTRSS)
 
     https://github.com/x86dev/docker-ttrss
@@ -322,51 +242,10 @@ ln -s ${MY_SRV_ROOT}/monthly /etc/cron.monthly/
             --name ttrss \
             x86dev/docker-ttrss
 
-## VPN (IPSEC)
-
-* Setup:
-
-        export MY_VPN_IPSEC_PSK=your_ipsec_pre_shared_key
-        export MY_VPN_USER=your_vpn_username
-        export MY_VPN_PASSWORD=your_vpn_password
-
-* Load kernel module:
-
-        modprobe af_key
-
-* Run:
-
-        docker run \
-            --name ipsec-vpn-server \
-            -e VPN_IPSEC_PSK=${MY_VPN_IPSEC_PSK} \
-            -e VPN_USER=${MY_VPN_USER} \
-            -e VPN_PASSWORD=${MY_VPN_PASSWORD} \
-            --restart=always \
-            -p 500:500/udp \
-            -p 4500:4500/udp \
-            -v /lib/modules:/lib/modules:ro \
-            -d --privileged \
-            hwdsl2/ipsec-vpn-server
-
-* Check status
-
-        docker exec -it ipsec-vpn-server ipsec status
-
 ## Gitea
 
 * Setup:
         docker volume create gitea-repo
-
-* Run:
-        docker run -d -it \
-            --name gitea \
-            --restart=always \
-            -v gitea-repo:/data \
-            -e VIRTUAL_HOST=git.${MY_DOMAIN} \
-            -e VIRTUAL_PORT=3000 \
-            -e LETSENCRYPT_HOST=git.${MY_DOMAIN} \
-            -e LETSENCRYPT_EMAIL=webmaster@${MY_DOMAIN} \
-            gitea/gitea
 
 * Configuration:
         vi /var/lib/docker/volumes/gitea-repo/_data/gitea/conf/app.ini
@@ -394,7 +273,7 @@ ln -s ${MY_SRV_ROOT}/monthly /etc/cron.monthly/
 
 ## Debugging
     docker run --rm -it <images> /bin/bash
-    wget --no-check-certificate -p http://pydio.${MY_DOMAIN}
+    wget --no-check-certificate -p http://myservice.${MY_DOMAIN}
     docker cp nginx-proxy:/etc/nginx/conf.d/default.conf /tmp && less /tmp/default.conf
 
     supervisord:
