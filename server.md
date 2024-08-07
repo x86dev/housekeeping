@@ -2,6 +2,9 @@
 
 ## Base
 
+        mkdir -p /srv
+        
+
 **Note: All commands must be executed on the server as root (unless stated otherwise)!**
 
         export MY_SRV_ROOT=/srv
@@ -31,9 +34,9 @@
         apt-get update && apt-get upgrade
         apt-get install -y apt-listchanges apt-transport-https net-tools ntp ntpdate ca-certificates curl htop podman podman-compose tmux git vim etckeeper mc fail2ban unattended-upgrades
 
-## Backports (for Debian and derivates)
+## Backports (for Debian 12 Bookworm)
 
-        sh -c "echo deb http://ftp.de.debian.org/debian jessie-backports main > /etc/apt/sources.list.d/jessie-backports.list"
+        sh -c "echo deb http://deb.debian.org/debian bookworm-backports main > /etc/apt/sources.list.d/debian-backports.list"
 
 ## Automatic updates (for Debian and derivates)
 
@@ -58,8 +61,11 @@
   
         sed -i 's|[#]*Port .*|Port 2222|g' /etc/ssh/sshd_config
         sed -i 's|[#]*PasswordAuthentication yes|PasswordAuthentication no|g' /etc/ssh/sshd_config
+        sed -i 's|[#]*PermitRootLogin yes|PermitRootLogin no|g' /etc/ssh/sshd_config
 
-* **First verify (important -- you could lock yourself out otherwise):** /usr/sbin/sshd -D -f /etc/ssh/sshd_config
+* **First verify (important -- you could lock yourself out otherwise):**
+  * On server (separate SSH daemon at port 2222): `/usr/sbin/sshd -D -f /etc/ssh/sshd_config`
+  * Login on client via: `ssh -i id_file -p 2222 ${MY_USER_NAME}@${MY_DOMAIN}`
 * The just-added user needs to be used in order to log in via SSH; after logging in a ```sudo su -``` can be
   used to switch to the root user
 * **Then**: ```service ssh restart```
